@@ -12,7 +12,7 @@ const router = express.Router();
 // all users
 router.get("/admin", getAllUsrs);
 
-// sigin & signup & signout
+// signup & signin & signout
 router.post("/adminsignup", adminSignUp);
 router.post("/adminsignin", adminSignIn);
 router.post("/adminsignout", adminSignout);

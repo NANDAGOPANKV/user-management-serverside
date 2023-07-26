@@ -62,6 +62,7 @@ const adminSignUp = async (req, res) => {
 };
 // signin
 const adminSignIn = async (req, res) => {
+  console.log("sdkjfhsdjfhsdjhdskjhcdsl");
   const { email, password } = req?.body;
   let admin;
 
@@ -73,15 +74,14 @@ const adminSignIn = async (req, res) => {
       .json({ message: "An error occurred while querying the database." });
   }
 
+  console.log(admin,"skdhfjldsfhsu");
+
   if (!admin) {
     return res.status(401).json({ message: "Invalid Email " });
   }
 
   try {
-    const reHashedPassword = await bcrypt.compareSync(
-      password,
-      admin?.password
-    );
+    const reHashedPassword = bcrypt.compareSync(password, admin?.password);
 
     if (!reHashedPassword) {
       return res.status(401).json({ message: "Invalid Password" });
@@ -90,6 +90,8 @@ const adminSignIn = async (req, res) => {
     const token = jwt.sign({ id: admin._id }, process.env.jwt_key, {
       expiresIn: "1hr",
     });
+
+    console.log(token);
 
     res.cookie("adminToken", token, {
       path: "/",

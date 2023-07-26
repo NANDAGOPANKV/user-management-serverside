@@ -11,7 +11,7 @@ const addUser = async (req, res) => {
 
   const hashedPassword = bcrypt.hashSync(password);
 
-  if (!userAlreadyExists) {
+  if (!userAlreadyExists || userAlreadyExists == null) {
     newUser = new User({
       name: name,
       email: email,
@@ -120,22 +120,23 @@ const verifyToken = async (req, res, next) => {
   next();
 };
 
-let userId;
 // get user
 const getUser = async (req, res) => {
-  userId = req.id;
+  const userId = req?.id;
 
   let user;
 
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return new Error(error);
+    return res.status(500).json({ message: "Error finding user" });
   }
 
   if (!user) {
-    return res.status(404).json({ message: "User Not There" });
+    return res.status(404).json({ message: "User Not Found" });
   }
+
+  console.log(user);
 
   return res.status(200).json({ user });
 };
