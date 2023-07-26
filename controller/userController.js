@@ -136,8 +136,6 @@ const getUser = async (req, res) => {
     return res.status(404).json({ message: "User Not Found" });
   }
 
-  console.log(user);
-
   return res.status(200).json({ user });
 };
 

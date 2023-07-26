@@ -23,13 +23,12 @@ const getAllUsrs = async (req, res) => {
 };
 // verify token
 const verifyToken = async (req, res, next) => {
-  const cookies = req.headers.cookie;
-  const token = cookies?.split("=")[1];
-
-  if (!token) {
+  let adminToken = req.cookies.adminToken;
+  console.log(adminToken);
+  if (!adminToken) {
     return res.status(404).json({ message: "No Token Found" });
   }
-  jwt.verify(String(token), process.env.jwt_key, (err, user) => {
+  jwt.verify(String(adminToken), process.env.jwt_key, (err, user) => {
     if (err) {
       return res.status(400).json({ message: "Invalid Token" });
     }
@@ -74,7 +73,7 @@ const adminSignIn = async (req, res) => {
       .json({ message: "An error occurred while querying the database." });
   }
 
-  console.log(admin,"skdhfjldsfhsu");
+  console.log(admin, "skdhfjldsfhsu");
 
   if (!admin) {
     return res.status(401).json({ message: "Invalid Email " });
@@ -115,14 +114,13 @@ const adminSignIn = async (req, res) => {
 };
 // admin signout
 const adminSignout = async (req, res) => {
-  const cookies = req.headers.cookie;
-  const prevToken = cookies?.split("=")[1];
+  let adminToken = req.cookies.adminToken;
 
-  if (!prevToken) {
+  if (!adminToken) {
     return res.status(400).json({ message: "Cant't Find Token" });
   }
 
-  jwt.verify(String(prevToken), process.env.jwt_key, (err, admin) => {
+  jwt.verify(String(adminToken), process.env.jwt_key, (err, admin) => {
     if (err) {
       console.log(err);
       return res.status(403).json({ message: "Verification Failed" });
@@ -140,6 +138,7 @@ const adminSignout = async (req, res) => {
 const adminEditUsers = async (req, res) => {
   let user;
   let id = req.params.id;
+  console.log(id);
   let { name, email } = req.body;
 
   try {
@@ -163,7 +162,7 @@ const adminEditUsers = async (req, res) => {
       .json({ message: "Unable To Update The User With This Id" });
   }
 
-  return res.status(200).json({ user });
+  return res.status(200).json({ message: "Successfully Edited" });
 };
 
 // delete user
@@ -186,7 +185,45 @@ const adminDeleteUser = async (req, res) => {
   return res.status(200).json({ message: "Account Deleted" });
 };
 
+// admin
+const getAdmin = async (req, res) => {
+  const adminId = req?.id;
+
+  let admin;
+
+  try {
+    admin = await Admin.findById(adminId);
+  } catch (error) {
+    return res.status(500).json({ message: "Error finding user" });
+  }
+
+  if (!admin) {
+    return res.status(404).json({ message: "User Not Found" });
+  }
+
+  return res.status(200).json({ admin });
+};
+
+// get single user
+const getSingleUser = async (req, res) => {
+  let id = req.params?.id;
+  let user;
+  try {
+    user = await User.findById(id);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: "Try Again With Another Id" });
+  }
+
+  if (!user) {
+    // console.log(user);
+    return res.status(404).json({ message: "Can't Find User" });
+  }
+  return res.status(200).json({ user });
+};
+
 module.exports = {
+  getAdmin,
   getAllUsrs,
   adminSignIn,
   adminSignUp,
@@ -194,4 +231,5 @@ module.exports = {
   adminEditUsers,
   verifyToken,
   adminDeleteUser,
+  getSingleUser,
 };
