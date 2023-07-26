@@ -129,7 +129,6 @@ const getUser = async (req, res) => {
 
   try {
     user = await User.findById(userId);
-    console.log(user);
   } catch (error) {
     return new Error(error);
   }
@@ -160,7 +159,6 @@ const uploadImage = async (req, res) => {
   });
 
   let done = await userUpdator.save();
-  console.log(done);
 
   res.status(200).json({ message: "Image uploaded successfully" });
 };

@@ -22,8 +22,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // routers
 const userRouter = require("./router/userRouter");
-
 app.use("/", userRouter);
+
+const adminRouter = require("./router/adminRouter");
+app.use("/", adminRouter);
 
 app.set(db);
 app.listen(3001, console.log("Server Started On 3001"));
