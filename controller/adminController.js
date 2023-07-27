@@ -170,6 +170,8 @@ const adminDeleteUser = async (req, res) => {
   let id = req.params.id;
   let user;
 
+  console.log("values", id, user);
+
   try {
     user = await User.findByIdAndRemove(id);
   } catch (error) {
